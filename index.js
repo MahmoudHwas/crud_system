@@ -7,23 +7,11 @@ var bodyParser = require('body-parser')
 const PORT = process.env.PORT || 4000
 const URL = process.env.MONGO_URL
 
-// mongoose.connect(URL).then((req, res) => {
-//     console.log("connected yo database")
+mongoose.connect(URL).then((req, res) => {
+    console.log("connected yo database")
 
-// })
-async function connectToDB() {
-    let conn;
-    if (!conn) {
-      conn = await mongoose.connect(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      console.log("Connected to database");
-    }
-    return conn;
-  }
-  connectToDB()
-// middlewares
+})
+
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
