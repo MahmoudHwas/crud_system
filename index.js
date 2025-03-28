@@ -1,42 +1,40 @@
-require("dotenv").config()
+require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose")
-const session = require("express-session")
+const mongoose = require("mongoose");
+const session = require("express-session");
+const bodyParser = require("body-parser");
+
 const app = express();
-var bodyParser = require('body-parser')
-const PORT = process.env.PORT || 4000
-const URL = process.env.MONGO_URL
+const URL = process.env.MONGO_URL;
 
-mongoose.connect(URL).then((req, res) => {
-    console.log("connected yo database")
+// Connect to MongoDB
+mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("connected to database"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
-})
-
-
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-
+// Middleware
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(session({
-    secret: 'my secret key',
-    saveUninitialized: true,
-    resave: false
-}))
+  secret: "my secret key",
+  saveUninitialized: true,
+  resave: false
+}));
 app.use((req, res, next) => {
-    res.locals.message = req.session.message
-    delete req.session.message
-    next()
-})
+  res.locals.message = req.session.message;
+  delete req.session.message;
+  next();
+});
 
-// set template engine
-app.set("view engine", 'ejs')
-app.use(express.static("uploads"))
-app.use("", require("./routes/route"))
-app.listen(PORT, () => {
+// Set EJS as template engine
+app.set("view engine", "ejs");
+app.set("views", "./views"); // تأكد إن ملفات EJS في مجلد views
 
-    console.log(`SERVER WORK ON PORT localhost:${PORT}`);
-    
-})
+// Static files
+app.use(express.static("uploads"));
 
+// Routes
+app.use("", require("./routes/route")); // تأكد إن المسار للـ routes صح
 
-
-
+// Export as Serverless Function
+module.exports = app;
