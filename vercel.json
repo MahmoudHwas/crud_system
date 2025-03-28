@@ -8,11 +8,12 @@
   ],
   "routes": [
     {
+      "src": "/uploads/(.*)",
+      "dest": "/public/uploads/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "index.js"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }

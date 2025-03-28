@@ -4,22 +4,16 @@ const User = require("../models/users")
 const multer = require("multer")
 const fs = require("fs")
 
-var storage = multer.diskStorage({
-    destination: function(req, file, cb)  {
-        cb(null, "./uploads");
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "public/uploads"); // حفظ الصور داخل مجلد public
     },
     filename: function (req, file, cb) {
-        cb(null, file.fieldname +"_" + Date.now() +"_" + file.originalname);
-       
-        
+        cb(null, file.fieldname + "_" + Date.now() + "_" + file.originalname);
     }
-
 });
 
-var upload = multer({
-    storage: storage
-
-}).single('image')
+const upload = multer({ storage: storage }).single("image");
 
 // insert user into databse
 router.post('/add', upload ,  (req, res) => {
