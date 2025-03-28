@@ -4,16 +4,16 @@ const User = require("../models/users");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage }).single('image');
+const upload = multer({ storage: storage }).single("image");
 
 // إضافة User
-router.post('/add', upload, async (req, res) => {
+router.post("/add", upload, async (req, res) => {
   try {
     const user = new User({
       name: req.body.name,
       email: req.body.email,
       phone: req.body.phone,
-      image: req.file ? req.file.buffer.toString('base64') : ''
+      image: req.file ? req.file.buffer.toString("base64") : "",
     });
     await user.save();
     res.redirect("/?message=User+Added+successfully&type=success");
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
       title: "Home Page",
       users: allUsers || [],
       message: message,
-      type: type
+      type: type,
     });
   } catch (err) {
     console.error("Error in GET /:", err.message);
@@ -55,7 +55,7 @@ router.get("/edit/:id", async (req, res) => {
     } else {
       res.render("edit_users", {
         title: "Edit User",
-        user: user
+        user: user,
       });
     }
   } catch (err) {
@@ -69,14 +69,18 @@ router.post("/update/:id", upload, async (req, res) => {
     let id = req.params.id;
     let new_image = req.body.old_image;
     if (req.file) {
-      new_image = req.file.buffer.toString('base64');
+      new_image = req.file.buffer.toString("base64");
     }
-    const user = await User.findByIdAndUpdate(id, {
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
-      image: new_image
-    }, { new: true });
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        image: new_image,
+      },
+      { new: true }
+    );
     if (!user) {
       res.redirect("/?message=No+user+found&type=danger");
     } else {

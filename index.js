@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 const URL = process.env.MONGO_URL;
 
 mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 
 app.set("view engine", "ejs");
-app.set("views", "./views"); // المسار نسبي من api/
+app.set("views", "views"); // المسار من الـ Root
 app.use(express.static("uploads"));
 
 // Error Handling Middleware
