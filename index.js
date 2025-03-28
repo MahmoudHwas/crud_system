@@ -4,6 +4,8 @@ const mongoose = require("mongoose")
 const session = require("express-session")
 const app = express();
 const bodyParser = require('body-parser')
+const path = require("path");
+
 const PORT = process.env.PORT || 4000
 const URL = process.env.MONGO_URL
 
@@ -29,7 +31,8 @@ app.use((req, res, next) => {
 })
 
 // Set template engine
-app.set("view engine", 'ejs')
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 app.use(express.static("public")) // نقل الملفات العامة إلى مجلد "public"
 app.use("", require("./routes/route"))
 
