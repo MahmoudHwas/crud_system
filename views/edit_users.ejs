@@ -1,39 +1,40 @@
 <%- include('layouts/header') %>
 
 <div class="container rounded">
-  <div class="col-lg-6 mx-auto mt-4 border">
-    <div class="card-header bg-success p-2">
-      <h3 class="text-light w-full">Edit User <%= user.name %></h3>
-    </div>
-    <form action="/update/<%= user._id %>" method="post" enctype="multipart/form-data" id="add-form" class="p-4">
-      <div class="row mb-3">
-        <label for="name" class="col-sm-2 col-form-label">Name</label>
-        <div class="col-sm-10">
-          <input type="text" name="name" value="<%= user.name %>" class="form-control" id="name" required>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <label for="email" class="col-sm-2 col-form-label">Email</label>
-        <div class="col-sm-10">
-          <input type="email" name="email" value="<%= user.email %>" class="form-control" id="email" required>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <label for="phone" class="col-sm-2 col-form-label">Phone</label>
-        <div class="col-sm-10">
-          <input type="tel" name="phone" value="<%= user.phone %>" class="form-control" id="phone" required>
-        </div>
-      </div>
-      <div class="mb-3">
-        <label for="image" class="form-label">Select Image</label>
-        <input class="form-control" name="image" type="file" id="image">
-        <% if (user.image) { %>
-          <img src="data:image/jpeg;base64,<%= user.image %>" width="100" class="img-thumbnail mt-1">
-        <% } %>
-      </div>
-      <input type="hidden" name="old_image" value="<%= user.image %>">
-      <button type="submit" class="btn btn-success bt-lg">Update User</button>
-    </form>
-  </div>
+       <div class="col-lg-6 mx-auto mt-4 border">
+            <div class="card-header bg-success p-2"  >
+                <h3 class="text-light w-full">Edit User <%= user.name  %></h3>
+            </div>
+        <form action="/update/<%= user._id  %>" method="post" enctype="multipart/form-data" id="add-form" class="p-4">     
+            <div class="row mb-3">
+                <label for="name" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                  <input type="text" name="name" value="<%= user.name  %>" class="form-control" id="name" required>
+                </div>
+              </div>  
+            <div class="row mb-3">
+              <label for="email" class="col-sm-2 col-form-label">Email</label>
+              <div class="col-sm-10">
+                <input type="email" name="email" value="<%= user.email  %>" class="form-control" id="email" required>
+              </div>
+            </div>
+           
+            <div class="row mb-3">
+                <label for="phone" class="col-sm-2 col-form-label">Phone</label>
+                <div class="col-sm-10">
+                  <input type="tel" name="phone" value="<%= user.phone  %>" class="form-control" id="phone" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="image"  class="form-label">Select Image</label>
+                <input class="form-control" name="image"  type="file" id="image" >
+                <img src="/<%= user.image %>" width="100" class="img-thumbnail mt-1" >
+              </div>
+              <input type="hidden" name="old_image" value="<%=  user.image %>">
+              <div class="mb-3 d-grid">
+                <button type="submit" name="submit"  class="btn btn-success bt-lg">Update User</button>
+              </div>
+          </form>
+       </div>
 </div>
-<%- include('layouts/footer') %>
+<%- include('layouts/footer')%>

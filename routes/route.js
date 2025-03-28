@@ -1,111 +1,145 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/users");
-const multer = require("multer");
+const User = require("../models/users")
+const multer = require("multer")
+const fs = require("fs")
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage }).single("image");
+var storage = multer.diskStorage({
+    destination: function(req, file, cb)  {
+        cb(null, "./uploads");
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname +"_" + Date.now() +"_" + file.originalname);
+       
+        
+    }
 
-// إضافة User
-router.post("/add", upload, async (req, res) => {
-  try {
+});
+
+var upload = multer({
+    storage: storage
+
+}).single('image')
+
+// insert user into databse
+router.post('/add', upload ,  (req, res) => {
     const user = new User({
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
-      image: req.file ? req.file.buffer.toString("base64") : "",
-    });
-    await user.save();
-    res.redirect("/?message=User+Added+successfully&type=success");
-  } catch (err) {
-    console.error("Error in POST /add:", err.message);
-    res.status(500).send("Error adding user: " + err.message);
-  }
-});
-
-// جلب كل الـ Users
-router.get("/", async (req, res) => {
-  try {
-    const allUsers = await User.find();
-    const message = req.query.message || null;
-    const type = req.query.type || null;
-    res.render("index", {
-      title: "Home Page",
-      users: allUsers || [],
-      message: message,
-      type: type,
-    });
-  } catch (err) {
-    console.error("Error in GET /:", err.message);
-    res.status(500).send("Error fetching users: " + err.message);
-  }
-});
-
-router.get("/add", (req, res) => {
-  res.render("add_users", { title: "Add-User" });
-});
-
-// تعديل User
-router.get("/edit/:id", async (req, res) => {
-  try {
-    let id = req.params.id;
-    const user = await User.findById(id);
-    if (!user) {
-      res.redirect("/?message=No+user+found&type=danger");
-    } else {
-      res.render("edit_users", {
-        title: "Edit User",
-        user: user,
-      });
-    }
-  } catch (err) {
-    console.error("Error in GET /edit/:id:", err.message);
-    res.status(500).send("Error fetching user: " + err.message);
-  }
-});
-
-router.post("/update/:id", upload, async (req, res) => {
-  try {
-    let id = req.params.id;
-    let new_image = req.body.old_image;
-    if (req.file) {
-      new_image = req.file.buffer.toString("base64");
-    }
-    const user = await User.findByIdAndUpdate(
-      id,
-      {
+        id: req.body.id + 1,
         name: req.body.name,
         email: req.body.email,
         phone: req.body.phone,
-        image: new_image,
-      },
-      { new: true }
-    );
-    if (!user) {
-      res.redirect("/?message=No+user+found&type=danger");
-    } else {
-      res.redirect("/?message=User+updated+successfully&type=success");
-    }
-  } catch (err) {
-    console.error("Error in POST /update/:id:", err.message);
-    res.status(500).send("Error updating user: " + err.message);
-  }
-});
+        image: req.file.filename
+    })
+  
+     user.save().then((data)=> {
+        if(data){
+            req.session.message = {
+              type: "success",
+               message: "user Added successfully"
+            };
+            res.redirect("/") 
+          
+        } else {
+              return res.json({message : err.message, type: "danger"})
+        }
+    });
+     
+})
 
-// حذف User
-router.get("/delete/:id", async (req, res) => {
-  try {
+
+// get All Users
+router.get("/", async (req, res) => {
+    const allUssers = await User.find();
+    if(!allUssers) {
+        res.status(400).json({message: "no users found"})
+    } else {
+        res.render("index", {
+            title: "Home Page",
+            users: allUssers
+        })
+    } 
+})
+
+router.get("/add", (req, res) => {
+    res.render("add_users", {title: "Add-User"})
+})
+
+// edit user
+
+router.get("/edit/:id", async (req, res) => {
+    let id = req.params.id;    
+    const user = await User.findById(id)
+    if(!user) {
+        res.redirect("/")
+    } else {
+        res.render("edit_users", {
+            title: "Edit User",
+            user: user
+        })
+    }
+
+ })
+
+ // update user
+ router.post("/update/:id", upload, async (req, res) => {
+    let id = req.params.id;   
+    let new_image = '';
+    if(req.file) {
+        new_image = req.file.filename;
+        try {
+            fs.unlinkSync('./uploads/'+req.body.old_image )
+        } catch (err) {
+            console.log(err);
+            
+        }
+
+    } else {
+        new_image = req.body.old_image 
+    }
+    const user = await User.findByIdAndUpdate(id, {$set:{
+            name: req.body.name,
+            email: req.body.email,
+            phone: req.body.phone,
+            image: new_image
+
+    }})
+
+    if(!user) {
+        res.status(400).json({message : "theres no data"})
+    } else {
+        req.session.message = {
+            type: "success",
+             message: "user updated successfully"
+          };
+        res.redirect("/")
+    }
+ })
+
+ // delete user 
+ router.get("/delete/:id" , async (req, res) => {
     let id = req.params.id;
-    const result = await User.findByIdAndDelete(id);
-    if (result) {
-      res.redirect("/?message=User+deleted+successfully&type=danger");
-    } else {
-      res.redirect("/?message=No+user+found&type=danger");
-    }
-  } catch (err) {
-    console.error("Error in GET /delete/:id:", err.message);
-    res.status(500).send("Error deleting user: " + err.message);
-  }
-});
+ 
+    
+        User.findByIdAndDelete(id).then((result) => {
+        if(result.image != '') {
+            try {
+                fs.unlinkSync("./uploads/"+result.image)
+            } catch(err) {
+                console.log(err);
+            }
+         }
+         if(result){
+            req.session.message = {
+                type: "danger",
+                 message: "user deleted successfully"
+              };
+          
+            res.redirect("/")
+         } else {
+            res.json({message: "no data found", type: "danger"})
+         }  
+     })
 
-module.exports = router;
+ })
+
+module.exports = router
