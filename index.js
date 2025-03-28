@@ -9,7 +9,10 @@ const URL = process.env.MONGO_URL
 
 mongoose.connect(URL).then(() => {
     console.log("Connected to database")
-})
+}).catch(err => {
+    console.error("Database connection error:", err);
+});
+
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
