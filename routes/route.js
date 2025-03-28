@@ -29,18 +29,19 @@ router.post('/add', upload, (req, res) => {
   });
 });
 
-// جلب كل الـ Users
 router.get("/", async (req, res) => {
-  const allUsers = await User.find();
-  if (!allUsers) {
-    res.status(400).json({ message: "no users found" });
-  } else {
-    res.render("index", {
-      title: "Home Page",
-      users: allUsers
-    });
-  } 
-});
+    try {
+      console.log("GET / called");
+      const allUsers = await User.find();
+      res.render("index", {
+        title: "Home Page",
+        users: allUsers || [] // لو مافيش Users، ابعت Array فاضي
+      });
+    } catch (err) {
+      console.error("Error in GET /:", err.message);
+      res.status(500).send("Something went wrong: " + err.message);
+    }
+  });
 
 router.get("/add", (req, res) => {
   res.render("add_users", { title: "Add-User" });
