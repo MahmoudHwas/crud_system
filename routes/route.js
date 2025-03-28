@@ -6,9 +6,9 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage }).single('image');
 
-// إضافة User
 router.post('/add', upload, async (req, res) => {
   try {
+    console.log("POST /add called");
     const user = new User({
       name: req.body.name,
       email: req.body.email,
@@ -16,6 +16,7 @@ router.post('/add', upload, async (req, res) => {
       image: req.file ? req.file.buffer.toString('base64') : ''
     });
     await user.save();
+    console.log("User saved:", user);
     req.session.message = {
       type: "success",
       message: "User Added successfully"
@@ -27,7 +28,6 @@ router.post('/add', upload, async (req, res) => {
   }
 });
 
-// جلب كل الـ Users
 router.get("/", async (req, res) => {
   try {
     console.log("GET / called");
@@ -43,12 +43,13 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/add", (req, res) => {
+  console.log("GET /add called");
   res.render("add_users", { title: "Add-User" });
 });
 
-// تعديل User
 router.get("/edit/:id", async (req, res) => {
   try {
+    console.log("GET /edit/:id called");
     let id = req.params.id;
     const user = await User.findById(id);
     if (!user) {
@@ -67,6 +68,7 @@ router.get("/edit/:id", async (req, res) => {
 
 router.post("/update/:id", upload, async (req, res) => {
   try {
+    console.log("POST /update/:id called");
     let id = req.params.id;
     let new_image = req.body.old_image;
     if (req.file) {
@@ -77,10 +79,11 @@ router.post("/update/:id", upload, async (req, res) => {
       email: req.body.email,
       phone: req.body.phone,
       image: new_image
-    });
+    }, { new: true });
     if (!user) {
       res.status(400).send("No user found");
     } else {
+      console.log("User updated:", user);
       req.session.message = {
         type: "success",
         message: "User updated successfully"
@@ -93,12 +96,13 @@ router.post("/update/:id", upload, async (req, res) => {
   }
 });
 
-// حذف User
 router.get("/delete/:id", async (req, res) => {
   try {
+    console.log("GET /delete/:id called");
     let id = req.params.id;
     const result = await User.findByIdAndDelete(id);
     if (result) {
+      console.log("User deleted:", result);
       req.session.message = {
         type: "danger",
         message: "User deleted successfully"
