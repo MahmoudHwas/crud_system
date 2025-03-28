@@ -11,35 +11,39 @@
             <% } %>
           <div class="table-responsive">
             <% if (users != '') { %>
-              <table class="table table-striped text-center">
-                <thead>
-                    <tr class="table-dark">
+                <table class="table table-striped text-center">
+                    <thead>
+                      <tr class="table-dark">
                         <th>ID</th>
                         <th>Image</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Action</th>
-                    </tr>
-                </thead>   
-                <tbody>
-                    <% users.forEach((row, index) => { %>
-                       <tr class="align-middle">
-                        <td><%= index %></td>
-                        <td><img src="<%= row.image %>" width="50" class="img-thumbnail" alt=""></td>
-                        <td><%= row.name %></td>
-                        <td><%= row.email %></td>
-                        <td><%= row.phone  %></td>
-                        <td>
+                      </tr>
+                    </thead>   
+                    <tbody>
+                      <% users.forEach((row, index) => { %>
+                        <tr class="align-middle">
+                          <td><%= index %></td>
+                          <td>
+                            <% if (row.image) { %>
+                              <img src="data:image/jpeg;base64,<%= row.image %>" width="50" class="img-thumbnail" alt="">
+                            <% } else { %>
+                              <span>No Image</span>
+                            <% } %>
+                          </td>
+                          <td><%= row.name %></td>
+                          <td><%= row.email %></td>
+                          <td><%= row.phone %></td>
+                          <td>
                             <a href="/edit/<%= row._id %>" class="text-success"><i class="fas fa-edit fa-lg mx-1"></i></a>
                             <a href="/delete/<%= row._id %>" class="text-success"><i class="fas fa-trash fa-lg mx-1"></i></a>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <% }) %>
-                  
-                </tbody> 
-            </table>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    </tbody> 
+                  </table>
             <% } else { %>
                 <h1 class="text-center text-secondary mt-5"> No users on the database</h1> 
                 <% } %>
