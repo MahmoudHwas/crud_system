@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   image: {
-    type: String, // Base64 String بدل اسم ملف
+    type: String, // Base64 String
     default: ""
   }
 });
