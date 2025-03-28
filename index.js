@@ -33,7 +33,8 @@ app.use((req, res, next) => {
 // Set template engine
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.use(express.static(path.join(__dirname, "public")));app.use("", require("./routes/route"))
+app.use(express.static("public")) // نقل الملفات العامة إلى مجلد "public"
+app.use("", require("./routes/route"))
 
 app.get("/api/health", (req, res) => {
     res.json({ status: "Server is running" })
