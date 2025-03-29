@@ -26,9 +26,11 @@
                 </div>
               </div>
               <div class="mb-3">
-                <label for="image"  class="form-label">Select Image</label>
-                <input class="form-control" name="image"  type="file" id="image" >
-                <img src="/<%= user.image %>" width="100" class="img-thumbnail mt-1" >
+                <label for="image" class="form-label">Select Image</label>
+                <input class="form-control" name="image" type="file" id="image">
+                <% if (user.image) { %>
+                  <img src="data:image/jpeg;base64,<%= user.image %>" width="100" class="img-thumbnail mt-1" alt="">
+                <% } %>
               </div>
               <input type="hidden" name="old_image" value="<%=  user.image %>">
               <div class="mb-3 d-grid">
